@@ -1,11 +1,16 @@
 const { response } = require('express')
 
 const Pool = require('pg').Pool
+
+/**
+ * IMPROVE SECURITY ON DB & EXPORT CREDENTIALS
+ * BEFORE PUSHING TO PRODUCTION
+ */
 const pool = new Pool({
-    user: 'me',
+    user: 'brandonfannin',
     host: 'localhost',
-    database: 'coindata',
-    password: 'password123',
+    database: 'palette',
+    password: '',
     port: 5432
 })
 
