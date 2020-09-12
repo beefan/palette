@@ -1,0 +1,15 @@
+{
+  "name": "palette-journal",
+  "version": "1.0.0",
+  "description": "associative journaling",
+  "main": "app.js",
+  "scripts": {
+    "test": "mocha appTest.js"
+  },
+  "author": "bfannin",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "pg": "^8.3.3"
+  }
+}
