@@ -26,7 +26,7 @@ app.use(express.static('public'));
 /* Routes */
 app.use('/user', require('./routes/user'));
 app.use('/user/settings', require('./routes/settings'));
-app.use('/1/api/', require('./routes/tag'));
+app.use('/1/api', require('./routes/tag'));
 
 app.get('/', (req, res) => {
 	res.send('Hello World')

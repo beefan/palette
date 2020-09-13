@@ -11,4 +11,7 @@ select * from settings where userid=4;
 delete from settings where userid=4;
 
 update settings (prompt_frequency_hrs, analysis_frequency_hrs, check_limit_hrs)
-VALUES (4, 4, 4) where userid=4;
+VALUES (6, 6, 6) where userid=4;
+
+insert into user_tag (userid, tagid, datetime) Values (4, 9, NOW());
+

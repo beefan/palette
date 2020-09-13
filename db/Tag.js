@@ -1,7 +1,11 @@
 const db = require('./database');
 
 async function getTagPalette(req, res) {
-    const userId = parseInt(req.params.userId)
+    if (req.user == null) {
+        res.status(403).send({msg: 'You need to be logged in for that.'});
+        return;
+    }
+    const userid = req.user[0].id;
     try {
         const sql = 'SELECT * FROM tag' // to be changed
         const {rows} = await db.query(sql);
@@ -12,20 +16,32 @@ async function getTagPalette(req, res) {
 }
 
 async function saveTag(req, res) {
-    const userId = parseInt(req.params.userId)
-    const tag = req.params.tag
-
+    if (req.user == null) {
+        res.status(403).send({msg: 'You need to be logged in for that.'});
+        return;
+    }
+    const userid = req.user[0].id;
+    const tag = req.body.tag;
     try {
-        const sql = 'SELECT * FROM tag' // to be changed
-        const {rows} = await db.query(sql);
-        res.status(200).send({ rows });
+        await db.query('START TRANSACTION;');
+        const {rows} = await db.query('SELECT id FROM tag WHERE tag=$1', [tag]);
+        const tagid = rows[0] ? rows[0].id : (await db.query('INSERT INTO tag (tag) VALUES ($1) RETURNING id', [tag])).rows[0].id;
+        await db.query('INSERT INTO user_tag (userid, tagid, datetime) VALUES ($1, $2, NOW())', [userid, tagid]);
+        await db.query('COMMIT;');
+        res.status(200).send({ msg: 'Tag saved successfully.' });
     } catch (err) {
+        console.error(err);
+        await db.query('ROLLBACK;');
         return res.send(err);
     }
 }
 
 async function getUserTagsByDay(req, res) {
-    const userId = parseInt(req.params.userId)
+    if (req.user == null) {
+        res.status(403).send({msg: 'You need to be logged in for that.'});
+        return;
+    }
+    const userid = req.user[0].id;
     const date = req.params.date
 
     try {
@@ -38,7 +54,11 @@ async function getUserTagsByDay(req, res) {
 }
 
 async function getUserTopTagsSince(req, res) {
-    const userId = parseInt(req.params.userId)
+    if (req.user == null) {
+        res.status(403).send({msg: 'You need to be logged in for that.'});
+        return;
+    }
+    const userid = req.user[0].id;
     const date = req.params.date
 
     try {
