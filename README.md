@@ -37,7 +37,7 @@ Ok, okay
 * routes/ 
     * Express router is used to separate routes into multiple files, again separated by which database table they will ultimately access.
 * views/ 
-    * nothing functional now (*9-13-2020*)--will be expanded or deleted in favor of a better front-end. 
+    * vuejs to handle the views
 * app.js 
     * express node server. 
 * package.json
