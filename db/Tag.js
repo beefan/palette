@@ -66,13 +66,19 @@ async function getUserTopTagsSince(req, res) {
         return;
     }
     const userid = req.user[0].id;
-    const date = req.params.date
+    const days = req.params.days;
+    console.log(days);
 
     try {
-        const sql = 'SELECT * FROM tag' // to be changed
-        const {rows} = await db.query(sql);
+        const sql = 'SELECT tag.tag, count(tag.tag) FROM user_tag ' +
+                    'JOIN tag ON tag.id = user_tag.tagid ' + 
+                    'WHERE user_tag.datetime > NOW() -  $1 * INTERVAL \'1 day\'' +
+                    'AND userid = $2 ' + 'GROUP BY tag.tag ' + 'ORDER BY count desc ' + 'LIMIT 50;';
+                    console.log(sql);
+        const {rows} = await db.query(sql, [days, userid]);
         res.status(200).send({ rows });
     } catch (err) {
+        console.error(err);
         return res.send(err);
     }
 }
