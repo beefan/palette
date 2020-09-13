@@ -42,13 +42,20 @@ async function getUserTagsByDay(req, res) {
         return;
     }
     const userid = req.user[0].id;
-    const date = req.params.date
+    const date = req.body.date;
 
     try {
-        const sql = 'SELECT * FROM tag' // to be changed
-        const {rows} = await db.query(sql);
+        const sql = 'SELECT tag.tag, count(tag.id) FROM user_tag ' +
+                    'JOIN tag ON tag.id = user_tag.tagid ' +
+                    'WHERE date_part(\'year\', datetime) = $1 ' +
+                    'AND     date_part(\'day\', datetime) = $2 ' +
+                    'AND     date_part(\'month\', datetime) = $3 ' +
+                    'AND     userid = $4 ' +  
+                    'GROUP BY tag.tag ORDER BY count desc; ';
+        const {rows} = await db.query(sql, [date.year, date.day, date.month, userid]);
         res.status(200).send({ rows });
     } catch (err) {
+        console.error(err);
         return res.send(err);
     }
 }
