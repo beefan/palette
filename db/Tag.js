@@ -87,15 +87,50 @@ async function getUserTagCousins(req, res) {
         return;
     }
     const userid = req.user[0].id;
-    const days = req.params.tag;
+    const tag = req.params.tag;
+    const num = req.params.num;
 
     try {
-        const sql = 'SELECT tag.tag, count(tag.tag) FROM user_tag ' +
-                    'JOIN tag ON tag.id = user_tag.tagid ' + 
-                    'WHERE user_tag.datetime > NOW() -  $1 * INTERVAL \'1 day\'' +
-                    'AND userid = $2 ' + 'GROUP BY tag.tag ' + 'ORDER BY count desc ' + 'LIMIT 50;';
-                    console.log(sql);
-        const {rows} = await db.query(sql, [days, userid]);
+        // if its not second cousin, we search first by default
+        const sql = (num != 2) ? 
+                    'select tag.tag, count(tag.tag) FROM user_tag ' +
+                    'JOIN tag ON tag.id = user_tag.tagid ' +
+                    'WHERE DATE(user_tag.datetime) ' +
+                    'IN ( SELECT DATE(user_tag.datetime) ' +
+                        'FROM user_tag ' +
+                        'JOIN tag on tag.id = user_tag.tagid ' +
+                        'WHERE tag.tag = $1 ' +
+                        'AND user_tag.userid = $2 ) ' +
+                    'AND tag.tag != $1 ' +
+                    'AND user_tag.userid = $2 ' +
+                    'GROUP BY tag.tag ' +
+                    'ORDER BY count desc;' 
+                    : 
+                    // query for second cousins
+                    'SELECT tag.tag, count(tag.tag) FROM user_tag ' +
+                    'JOIN tag ON tag.id = user_tag.tagid ' +
+                    'WHERE DATE(user_tag.datetime) ' +
+                            'IN ( SELECT DATE(user_tag.datetime) FROM user_tag ' +
+                                    'JOIN tag ON tag.id = user_tag.tagid ' +
+                                    'WHERE tag.tag ' +
+                                            'IN (select tag.tag FROM user_tag ' +
+                                                    'JOIN tag ON tag.id = user_tag.tagid ' +
+                                                    'WHERE DATE(user_tag.datetime) ' +
+                                                            'IN ( SELECT DATE(user_tag.datetime) ' +
+                                                                    'FROM user_tag ' +
+                                                                    'JOIN tag on tag.id = user_tag.tagid ' + 
+                                                                    'WHERE tag.tag = $1 ' + 
+                                                                    'AND user_tag.userid = $2 ) ' +
+                                                    'AND tag.tag != $1 ' +
+                                                    'AND user_tag.userid = $2 ' +
+                                                    'GROUP BY tag.tag ) ' +
+                                    'AND user_tag.userid = $2 ' +
+                                    'GROUP BY DATE(user_tag.datetime) ' +
+                            ') ' +
+                    'AND user_tag.userid = $2 ' +
+                    'GROUP BY tag.tag ' +
+                    'ORDER BY count desc;'
+        const {rows} = await db.query(sql, [tag, userid]);
         res.status(200).send({ rows });
     } catch (err) {
         console.error(err);
