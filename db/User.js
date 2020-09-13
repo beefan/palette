@@ -2,7 +2,6 @@ const db = require('./database');
 const bcrypt = require('bcrypt');
 
 async function loginUser(req, username, password, done) {
-    console.log('login', username, password)
     try {
         const sql = 'SELECT id, username, email, password FROM users WHERE username=$1';
         const {rows} = await db.query(sql, [username]);
@@ -16,7 +15,7 @@ async function loginUser(req, username, password, done) {
                     console.error('Error while checking password');
                     return done();
                 } else if (check) {
-                    return done(null, [{email: rows[0].email, username: rows[0].username}]);
+                    return done(null, [{id: rows[0].id, email: rows[0].email, username: rows[0].username}]);
                 } else {
                     console.error('Incorrect login details');
                     return done();

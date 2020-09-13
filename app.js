@@ -1,24 +1,26 @@
 /* deps */
 const express = require('express');
 require('dotenv').config();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3002;
 
 const passport = require('passport');
 const session = require('express-session');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 
 /* Middleware */
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(session({
 	secret: 'appSecretGoesHere',
 	resave: false,
-	saveUninitialized: true,
-	cookie: { secure: true }
+	saveUninitialized: true
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+
 app.use(express.static('public'));
 
 /* Routes */

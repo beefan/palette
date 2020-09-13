@@ -5,7 +5,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const User = require('./../db/User');
 
-passport.use('local', new LocalStrategy({passReqToCallback: true}, User.loginUser ));
+passport.use(new LocalStrategy({passReqToCallback: true}, User.loginUser ));
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
 

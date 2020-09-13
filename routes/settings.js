@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+
 const Settings = require('./../db/Settings');
 
 router.use(function timeLog(req, res, next) {
