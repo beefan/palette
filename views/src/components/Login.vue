@@ -29,6 +29,7 @@ b-container
 </template>
 
 <script>
+const fetchutil = require('../assets/fetch-util')
 export default {
     data() {
         return {
@@ -38,13 +39,19 @@ export default {
                 confirmPassword: '',
                 email: ''
             },
-            showlogin: true
+            showlogin: true,
+            apihost: process.env.VUE_APP_API_HOST
         }
     },
     methods: {
-        login(e) {
+        async login(e) {
             e.preventDefault()
-            this.$bvToast.toast('You clicked Login')
+            const data = {
+                username: this.form.username,
+                password: this.form.password
+            }
+            const res = await fetchutil.postData(`${this.apihost}/user/login`, data );
+            console.log(res);
         },
         register(e) {
             e.preventDefault()

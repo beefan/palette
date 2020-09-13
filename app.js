@@ -7,10 +7,11 @@ const passport = require('passport');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-
+const cors = require('cors');
 const app = express();
 
 /* Middleware */
+app.use(cors());
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(session({
@@ -29,7 +30,7 @@ app.use('/user/settings', require('./routes/settings'));
 app.use('/1/api', require('./routes/tag'));
 
 app.get('/', (req, res) => {
-	res.send('Hello World')
+	res.status(200).send({msg: 'Login success.'})
 });
 
 /* Serve */

@@ -14,13 +14,13 @@ router.use(function timeLog(req, res, next) {
     next();
   });
 
-router.get('/login', (req, res) => {
-    res.sendFile(path.resolve('views/login.html'))
+router.get('/login/failed', (req, res) => {
+    res.status(403).send({msg: 'Login Failed'});
 })
 
 router.post('/login', passport.authenticate('local', {
     successRedirect: '/',
-    failureRedirect: '/user/login',
+    failureRedirect: '/user/login/failed',
 }));
 
 router.post('/create', (req, res) => {
