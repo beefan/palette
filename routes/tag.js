@@ -9,6 +9,7 @@ router.use(function timeLog(req, res, next) {
   
 router.get('/palette', Tag.getTagPalette );
 router.get('/tags', Tag.getUserTagsByDay );
+router.get('/tags/:tag/cousins', Tag.getUserTagCousins );
 router.get('/tags/since/:days', Tag.getUserTopTagsSince );
 router.post('/tags/save', Tag.saveTag );
 
