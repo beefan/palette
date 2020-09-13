@@ -21,13 +21,13 @@ VALUES (6, 6, 6) where userid=4;
 
 -- inserts into user_tag for testing
 insert into tag (tag) VALUES ('new') RETURNING id;
-insert into user_tag (userid, tagid, datetime) Values (4, (SELECT id FROM tag WHERE tag='huggy'), '2020-03-12');
+insert into user_tag (userid, tagid, datetime) Values (4, (SELECT id FROM tag WHERE tag='huggy'), NOW());
 insert into user_tag (userid, tagid, datetime) Values (4, (SELECT id FROM tag WHERE tag='dog'), '2020-08-08');
 insert into user_tag (userid, tagid, datetime) Values (4, (SELECT id FROM tag WHERE tag='huggy'), '2020-08-08');
 insert into user_tag (userid, tagid, datetime) Values (4, (SELECT id FROM tag WHERE tag='dark blue sky'), '2020-08-18');
 insert into user_tag (userid, tagid, datetime) Values (4, (SELECT id FROM tag WHERE tag='grrr'), '2020-08-18');
 insert into user_tag (userid, tagid, datetime) Values (4, (SELECT id FROM tag WHERE tag='lunnnnnch'), '2020-08-28');
-insert into user_tag (userid, tagid, datetime) Values (4, (SELECT id FROM tag WHERE tag='dog'), '2020-08-28');
+insert into user_tag (userid, tagid, datetime) Values (4, (SELECT id FROM tag WHERE tag='dog'), '2020-09-12');
 insert into user_tag (userid, tagid, datetime) Values (4, (SELECT id FROM tag WHERE tag='huggy'), '2020-08-28');
 
 -- select tags for specific day
@@ -139,3 +139,11 @@ AND user_tag.userid = 4
 GROUP BY tag.tag
 ORDER BY count desc;
 
+-- tag palette, can get smarter, top tags for last 3 months
+SELECT tag.tag, count(tag.tag) FROM user_tag
+JOIN tag ON tag.id = user_tag.tagid
+WHERE user_tag.datetime > NOW() - INTERVAL '3 months'
+AND userid = 4
+GROUP BY tag.tag
+ORDER BY count desc
+LIMIT 50;

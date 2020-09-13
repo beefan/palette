@@ -7,8 +7,14 @@ async function getTagPalette(req, res) {
     }
     const userid = req.user[0].id;
     try {
-        const sql = 'SELECT * FROM tag' // to be changed
-        const {rows} = await db.query(sql);
+        // Needs to be smarter at predicting users desired tags for value-add 
+        // Now returns top tags for last 3 months.
+        const sql = 'SELECT tag.tag, count(tag.tag) FROM user_tag ' +
+                    'JOIN tag ON tag.id = user_tag.tagid ' +
+                    'WHERE user_tag.datetime > NOW() - INTERVAL \'3 months\' ' +
+                    'AND userid = $1 ' + 'GROUP BY tag.tag ' + 
+                    'ORDER BY count desc ' + 'LIMIT 50;'
+        const {rows} = await db.query(sql, [userid]);
         res.status(200).send({ rows });
     } catch (err) {
         return res.send(err);
