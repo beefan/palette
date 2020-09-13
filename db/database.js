@@ -1,27 +1,23 @@
-const { response } = require('express')
+const { Pool } = require('pg');
 
-const Pool = require('pg').Pool
-
-/**
- * IMPROVE SECURITY ON DB & EXPORT CREDENTIALS
- * BEFORE PUSHING TO PRODUCTION
- */
 const pool = new Pool({
-    user: 'brandonfannin',
-    host: 'localhost',
-    database: 'palette',
-    password: '',
-    port: 5432
+    user: process.env.PG_USER,
+    host: process.env.PG_HOST,
+    database: process.env.PG_DATABASE,
+    password: process.env.PG_PASSWORD,
+    port: process.env.PG_PORT
 })
 
-function query(sql) {
+function query(sql, values) {
     return new Promise( (resolve, reject) => {
         pool
-        .query(sql)
+        .query(sql, values)
         .then((res) => {
+            console.log('resolve');
             resolve(res);
         })
         .catch((err) => {
+            console.log('reject');
             reject(err);
         });
     });
