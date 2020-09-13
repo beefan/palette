@@ -27,14 +27,14 @@ async function saveUserSettings(req, res) {
     const userid = req.user[0].id;
     try {
         await db.query('START TRANSACTION;');
-        const sql = 'SELECT id FROM settings WHERE userid=$1';
-        const {rows} = await db.query(sql, [userid]);
+        const {rows} = await db.query('SELECT id FROM settings WHERE userid=$1', [userid]);
         if (rows[0] != null) {
-            const sqll = 'DELETE FROM settings WHERE userid=$1';
-            await db.query(sqll, [userid]);
+            await db.query('DELETE FROM settings WHERE userid=$1', [userid]);
         } 
-        const sqlll = 'INSERT INTO settings (userId, prompt_frequency_hrs, analysis_frequency_hrs, check_limit_hrs) VALUES ($1, $2, $3, $4)';
-        await db.query(sqlll, [userid, pf, af, cl]);
+        await db.query(
+            'INSERT INTO settings (userId, prompt_frequency_hrs, analysis_frequency_hrs, check_limit_hrs) VALUES ($1, $2, $3, $4)', 
+            [userid, pf, af, cl]
+            );
         await db.query('COMMIT;');
         res.status(200).send({ msg: 'Settings successfully saved.' });
     } catch (err) {
