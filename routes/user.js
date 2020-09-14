@@ -15,7 +15,7 @@ router.use(function timeLog(req, res, next) {
   });
 
 router.get('/login/failed', (req, res) => {
-    res.status(403).send({msg: 'Login Failed'});
+    res.status(403).send({msg: 'Incorrect username or password.'});
 })
 
 router.post('/login', passport.authenticate('local', {

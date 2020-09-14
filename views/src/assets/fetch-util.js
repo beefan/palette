@@ -8,15 +8,16 @@ async function postData(url='', data={}) {
         },
         body: JSON.stringify(data)
     }));
-    return response.json();
+    return response;
 }
 
 async function getData(url='', data={}) {
     const response = await(fetch(url, {
         method: 'GET',
+        credentials: 'include',
         body: JSON.stringify(data)
     }));
-    return response.json();
+    return response;
 }
 
 module.exports = {

@@ -1,6 +1,6 @@
 <template lang="pug">
 div#app
-  Login 
+  Login(@login="login" v-if="!loggedIn")
 </template>
 
 <script>
@@ -10,6 +10,19 @@ export default {
   name: "App",
   components: {
     Login
+  },
+  data() {
+    return {
+      loggedIn: false
+    }
+  },
+  methods: {
+    login() {
+      this.loggedIn = true;
+    },
+    logout() {
+      this.loggedIn = false;
+    }
   }
 };
 </script>

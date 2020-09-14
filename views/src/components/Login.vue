@@ -7,7 +7,7 @@ b-container
         b-form-group(label="Password: " label-for="input-2")
             b-form-input(id="input-2" v-model="form.password" :state="passwordValidation" type="password")
             b-form-invalid-feedback(:state="passwordValidation") password must be greater than 8 characters
-        b-button(type="submit" variant="dark") Login
+        b-button(type="submit" variant="dark" :disabled="allowLogin") Login
         p not a registered user? 
             a(@click="showlogin = !showlogin") create an account 
     b-form(@submit="register" v-if="!showlogin")
@@ -23,7 +23,7 @@ b-container
         b-form-group(label="Confirm Password: " label-for="input-4")
             b-form-input(id="input-4" v-model="form.confirmPassword" :state="confirmPasswordValidation" type="password")
             b-form-invalid-feedback(:state="confirmPasswordValidation") passwords must match
-        b-button(type="submit" variant="dark") Create User
+        b-button(type="submit" variant="dark" :disabled="allowCreateUser") Create User
         p already registerd? 
             a(@click="showlogin = !showlogin") login
 </template>
@@ -51,7 +51,18 @@ export default {
                 password: this.form.password
             }
             const res = await fetchutil.postData(`${this.apihost}/user/login`, data );
-            console.log(res);
+            const body = await res.json();
+   
+            if (res.status == 200 && body.msg == 'Login success.') {
+                this.$emit('login');
+            } else {
+                this.form.password = '.';
+                this.$bvToast.toast(body.msg, {
+                    title: 'Login Failed',
+                    variant: 'danger',
+                    toaster: 'b-toaster-top-center'
+                });
+            }
         },
         register(e) {
             e.preventDefault()
@@ -59,6 +70,15 @@ export default {
         }
     },
     computed: {
+        allowLogin() {
+            return !(this.usernameValidation && this.passwordValidation);
+        },
+        allowCreateUser() {
+            return !(this.usernameValidation && 
+                   this.passwordValidation && 
+                   this.emailValidation && 
+                   this.confirmPasswordValidation);
+        },
         usernameValidation() {
             if (this.form.username == '') return null;
             return this.form.username.length > 4 && 
