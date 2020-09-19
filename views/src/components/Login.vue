@@ -19,7 +19,7 @@ b-container
             b-form-invalid-feedback(:state="emailValidation") email must be valid, wait who determines what's <em>valid</em> anyway?
         b-form-group(label="Password: " label-for="input-2")
             b-form-input(id="input-2" v-model="form.password" :state="passwordValidation" type="password")
-            b-form-invalid-feedback(:state="passwordValidation") password must be greater than 8 characters
+            b-form-invalid-feedback(:state="passwordValidation") password must be greater than 15 characters
         b-form-group(label="Confirm Password: " label-for="input-4")
             b-form-input(id="input-4" v-model="form.confirmPassword" :state="confirmPasswordValidation" type="password")
             b-form-invalid-feedback(:state="confirmPasswordValidation") passwords must match
@@ -64,9 +64,33 @@ export default {
                 });
             }
         },
-        register(e) {
+        async register(e) {
             e.preventDefault()
-            alert('rarrr')
+            const data = {
+                username: this.form.username,
+                password: this.form.password,
+                email: this.form.email
+            }
+
+            const res = await fetchutil.postData(`${this.apihost}/user/create`, data );
+            const body = await res.json();
+   
+            if (res.status == 200) {
+                this.$bvToast.toast(body.msg, {
+                    title: 'User Successfully created.',
+                    variant: 'success',
+                    toaster: 'b-toaster-top-center'
+                });
+                this.form.password = '';
+                this.form.confirmPassword = '';
+                this.showlogin = true;
+            } else {
+                this.$bvToast.toast(body.msg, {
+                    title: 'Creation Failed',
+                    variant: 'danger',
+                    toaster: 'b-toaster-top-center'
+                });
+            }
         }
     },
     computed: {
@@ -93,7 +117,7 @@ export default {
         },
         passwordValidation() {
             if (this.form.password == '') return null;
-            return this.form.password.length > 8
+            return this.form.password.length > 15
         },
         confirmPasswordValidation() {
             if (this.form.confirmPassword == '') return null;
