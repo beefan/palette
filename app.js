@@ -26,7 +26,10 @@ app.use('/user/settings', require('./routes/settings'));
 app.use('/1/api', require('./routes/tag'));
 
 app.get('/', (req, res) => {
-	res.status(200).send({msg: 'Login success.'})
+	if (req.user) {
+		res.status(200).send({msg: 'Login success.'})
+	}
+	res.status(500).send({msg: 'No active login.'})
 });
 
 /* Serve */

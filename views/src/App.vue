@@ -9,6 +9,7 @@ div#app
 import Login from "./components/Login.vue";
 import Settings from "./components/Settings.vue";
 import Palette from "./components/Palette.vue";
+import fetchUtil from './assets/fetch-util';
 
 export default {
   name: "App",
@@ -23,12 +24,21 @@ export default {
       settings: true
     }
   },
+  mounted() {
+    this.loginIfSessionIsActive();
+  },
   methods: {
     login() {
       this.loggedIn = true;
     },
     logout() {
       this.loggedIn = false;
+    },
+    async loginIfSessionIsActive() {
+      const res = await fetchUtil.getData(process.env.VUE_APP_API_HOST);
+      await res.json();
+      console.log(res.status);
+      this.loggedIn = res.status == 200;
     }
   }
 };
