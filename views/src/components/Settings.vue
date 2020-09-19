@@ -17,7 +17,7 @@
                 b-form-group(description="invest in your growth, but don't get obsessive")
                     b-input-group(prepend="Check Limit " append= " hrs")
                         b-form-input(v-model="settings.check_limit_hrs", type="text")
-                b-button(:variant="buttonVariant" :disabled="!isChanged") Save Changes
+                b-button(@click="saveSettings" :variant="buttonVariant" :disabled="!isChanged") Save Changes
 </template>
 
 <script>
@@ -31,7 +31,7 @@ export default {
         }
     },
     mounted() {
-        this.getSettings();
+        this.fetchSettings();
     },
     computed: {
         isSettings() {
@@ -51,13 +51,29 @@ export default {
         }
     },
     methods: {
-        async getSettings() {
+        async fetchSettings() {
             const res = await fetchutil.getData(`${this.apihost}/user/settings/`);
             const body = await res.json();
             this.settings = body[0];
             this.settingsWatcher = Object.assign({}, this.settings);
         },
-
+        async saveSettings() {
+            const res = await fetchutil.postData(`${this.apihost}/user/settings/save/`, this.settings);
+            const body = await res.json();
+            if (res.status == 200){
+                this.$bvToast.toast(body.msg, {
+                    title: 'Saved',
+                    variant: 'success',
+                    toaster: 'b-toaster-top-center'
+                });
+            } else {
+                this.$bvToast.toast(body.msg, {
+                    title: 'Error',
+                    variant: 'danger',
+                    toaster: 'b-toaster-top-center'
+                });
+            }
+        }
     }
 }
 </script>
