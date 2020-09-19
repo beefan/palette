@@ -1,19 +1,26 @@
 <template lang="pug">
 div#app
   Login(@login="login" v-if="!loggedIn")
+  Settings(@goback="settings = !settings" v-if="loggedIn && settings")
+  Palette(v-if="loggedIn && !settings")
 </template>
 
 <script>
 import Login from "./components/Login.vue";
+import Settings from "./components/Settings.vue";
+import Palette from "./components/Palette.vue";
 
 export default {
   name: "App",
   components: {
-    Login
+    Login,
+    Settings,
+    Palette
   },
   data() {
     return {
-      loggedIn: false
+      loggedIn: false,
+      settings: true
     }
   },
   methods: {
