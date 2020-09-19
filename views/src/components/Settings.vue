@@ -17,6 +17,7 @@
                 b-form-group(description="invest in your growth, but don't get obsessive")
                     b-input-group(prepend="Check Limit " append= " hrs")
                         b-form-input(v-model="settings.check_limit_hrs", type="text")
+                b-button(:variant="buttonVariant" :disabled="!isChanged") Save Changes
 </template>
 
 <script>
@@ -24,6 +25,7 @@ const fetchutil = require('../assets/fetch-util')
 export default {
     data() {
         return {
+            settingsWatcher: null,
             settings: null,
             apihost: process.env.VUE_APP_API_HOST,
         }
@@ -34,6 +36,18 @@ export default {
     computed: {
         isSettings() {
             return !(this.settings == null);       
+        },
+        isChanged() {
+            if (this.settings == null) return false;
+
+            for (const property in this.settings) {
+                if (this.settings[property] != this.settingsWatcher[property]) return true;
+            }
+
+            return false;
+        },
+        buttonVariant() {
+            return this.isChanged ? "danger" : "dark";
         }
     },
     methods: {
@@ -41,7 +55,9 @@ export default {
             const res = await fetchutil.getData(`${this.apihost}/user/settings/`);
             const body = await res.json();
             this.settings = body[0];
-        }
+            this.settingsWatcher = Object.assign({}, this.settings);
+        },
+
     }
 }
 </script>
