@@ -8,7 +8,7 @@
             h1 Settings
     hr
     div#settings-main(v-if="settings")
-        p {settings}
+        p {{settings}}
 
 
 
@@ -30,8 +30,7 @@ export default {
         async getSettings() {
             const res = await fetchutil.getData(`${this.apihost}/user/settings/`);
             const body = await res.json();
-            console.log(body);
-            this.settings = {type: "dog"};
+            this.settings = body[0];
         }
     }
 }

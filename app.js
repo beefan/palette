@@ -4,25 +4,21 @@ require('dotenv').config();
 const port = process.env.PORT || 3002;
 
 const passport = require('passport');
-const session = require('express-session');
+const session = require('cookie-session');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const app = express();
 
 /* Middleware */
-app.use(cors());
-app.use(bodyParser.json());
+app.use(cors({origin: process.env.FRONTEND, credentials: true}));
 app.use(cookieParser());
-app.use(session({
-	secret: 'appSecretGoesHere',
-	resave: false,
-	saveUninitialized: true
-}));
+app.use(bodyParser.json());
+app.use(session({secret:'shhhhhh-login', sameSite: 'strict', signed: false}));
 app.use(passport.initialize());
 app.use(passport.session());
-
 app.use(express.static('public'));
+
 
 /* Routes */
 app.use('/user', require('./routes/user'));

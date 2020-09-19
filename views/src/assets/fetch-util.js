@@ -3,6 +3,7 @@ async function postData(url='', data={}) {
         method: 'POST',
         mode: 'cors',
         cache: 'default',
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json'
         },
@@ -11,11 +12,11 @@ async function postData(url='', data={}) {
     return response;
 }
 
-async function getData(url='', data={}) {
+async function getData(url='') {
     const response = await(fetch(url, {
         method: 'GET',
-        credentials: 'include',
-        body: JSON.stringify(data)
+        mode: 'cors',
+        credentials: 'include'
     }));
     return response;
 }
