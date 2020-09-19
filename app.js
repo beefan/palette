@@ -28,8 +28,9 @@ app.use('/1/api', require('./routes/tag'));
 app.get('/', (req, res) => {
 	if (req.user) {
 		res.status(200).send({msg: 'Login success.'})
+	} else {
+		res.status(500).send({msg: 'No active login.'})
 	}
-	res.status(500).send({msg: 'No active login.'})
 });
 
 /* Serve */

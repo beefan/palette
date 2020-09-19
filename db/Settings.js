@@ -10,8 +10,21 @@ async function getUserSettings(req, res) {
         const sql = 'SELECT prompt_frequency_hrs, analysis_frequency_hrs, check_limit_hrs FROM settings WHERE userid=$1';
         const {rows} = await db.query(sql, [userid]);
         console.log('rows: ', rows), userid;
-        res.status(200).send(rows);
+        if (rows[0] != null) {
+            res.status(200).send(rows);
+        } else {
+            await db.query('START TRANSACTION;');
+            await db.query(
+                'INSERT INTO settings (userid, prompt_frequency_hrs, analysis_frequency_hrs, check_limit_hrs) VALUES ($1, $2, $3, $4)', 
+                [userid, process.env.DF_SETTING_PF, process.env.DF_SETTING_AF, process.env.DF_SETTING_CL]
+                );    
+            await db.query('COMMIT;');
+            const {rows} = await db.query(sql, [userid])
+            res.status(200).send(rows);
+        }
     } catch (err) {
+        await db.query('ROLLBACK;')
+        console.error(err);
         return res.send(err);
     }
 }
@@ -32,7 +45,7 @@ async function saveUserSettings(req, res) {
             await db.query('DELETE FROM settings WHERE userid=$1', [userid]);
         } 
         await db.query(
-            'INSERT INTO settings (userId, prompt_frequency_hrs, analysis_frequency_hrs, check_limit_hrs) VALUES ($1, $2, $3, $4)', 
+            'INSERT INTO settings (userd, prompt_frequency_hrs, analysis_frequency_hrs, check_limit_hrs) VALUES ($1, $2, $3, $4)', 
             [userid, pf, af, cl]
             );
         await db.query('COMMIT;');
