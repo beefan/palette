@@ -7,18 +7,11 @@ async function getUserSettings(req, res) {
     }
     const userid = req.user[0].id;
     try {
-        const {rows} = await db.query('SELECT prompt_frequency_hrs, analysis_frequency_hrs, check_limit_hrs ' +
-                                        'FROM settings WHERE userid=$1', [userid]);
-        if (rows[0]) {
-            res.status(200).send(rows);
-        }else {
-            const {rows} = await db.query('INSERT INTO settings(userid, prompt_frequency_hrs, analysis_frequency_hrs, check_limit_hrs)' +
-            'VALUES ($1, $2, $3, $4) RETURNING *', 
-            [userid, 24, 24*7, 6]);
-            res.status(200).send(rows);
-        }
+        const sql = 'SELECT prompt_frequency_hrs, analysis_frequency_hrs, check_limit_hrs FROM settings WHERE userid=$1';
+        const {rows} = await db.query(sql, [userid]);
+        console.log('rows: ', rows), userid;
+        res.status(200).send(rows);
     } catch (err) {
-        console.error(err);
         return res.send(err);
     }
 }
