@@ -15,7 +15,8 @@ async function getTagPalette(req, res) {
             'AND userid = $1 ' + 'GROUP BY tag.tag ' +
             'ORDER BY count desc ' + 'LIMIT 50;'
         const { rows } = await db.query(sql, [userid]);
-        res.status(200).send(rows);
+        const tags = rows.map(x => x.tag);
+        res.status(200).send(tags);
     } catch (err) {
         return res.send(err);
     }
@@ -48,7 +49,7 @@ async function getUserTagsByDay(req, res) {
         return;
     }
     const userid = req.user[0].id;
-    const date = req.body.date;
+    const date = req.params.date;
 
     try {
         const sql = 'SELECT tag.tag, count(tag.id) FROM user_tag ' +
@@ -58,7 +59,8 @@ async function getUserTagsByDay(req, res) {
             'GROUP BY tag.tag ' +
             'ORDER BY count desc;';
         const { rows } = await db.query(sql, [date, userid]);
-        res.status(200).send(rows);
+        const tags = rows.map(x => x.tag);
+        res.status(200).send(tags);
     } catch (err) {
         console.error(err);
         return res.send(err);
