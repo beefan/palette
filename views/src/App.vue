@@ -2,15 +2,13 @@
 div#app
   b-nav(align="center" v-if="activeView != views.LOGIN")
     b-nav-text.title {{ activeView }}
-    b-nav-form
-      b-form-input(v-if="activeView == views.PALETTE" v-model="searchTerms" ria-label="Input" class="mr-1")
     b-nav-item-dropdown(id="nav-dropdown" style="font-size: 2rem;" text="🎨")
       b-dropdown-item(@click="activeView = views.PALETTE") Palette
       b-dropdown-item(@click="activeView = views.SETTINGS") Settings
       b-dropdown-item(@click="logout") Logout
   Login(@login="activeView = views.PALETTE" v-if="activeView == views.LOGIN")
   Settings(v-if="activeView == views.SETTINGS")
-  Palette(v-if="activeView == views.PALETTE" :search-text="searchTerms")
+  Palette(v-if="activeView == views.PALETTE")
 </template>
 
 <script>
@@ -28,7 +26,6 @@ export default {
   },
   data() {
     return {
-      searchTerms: "",
       views: {
         LOGIN: "Login",
         SETTINGS: "Settings",
