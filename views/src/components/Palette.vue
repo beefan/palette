@@ -53,10 +53,10 @@ export default {
       return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
     },
     todaysTopTags() {
-      return this.todaysTags.filter((x, i) => i <= 10);
+      return this.todaysTags.slice(0, 9);
     },
     todaysTagsOverflow() {
-      return this.todaysTags.filter((x, i) => i > 10);
+      return this.todaysTags.slice(10);
     }
   },
   mounted() {
@@ -74,7 +74,7 @@ export default {
         `${this.apihost}/1/api/tags/${this.dateString}`
       );
       const body = await res.json();
-      this.todaysTags = body.filter(x => x != null);
+      this.todaysTags = body.filter(x => x != null).map(x => x.trim());
     },
     async saveTag(tag) {
       const res = await fetchUtil.postData(`${this.apihost}/1/api/tags/save`, {
@@ -83,8 +83,8 @@ export default {
       const body = await res.json();
 
       if (res.status == 200) {
-        this.todaysTags = this.todaysTags.filter(x => x != tag);
-        this.todaysTags.push(tag);
+        this.todaysTags = this.todaysTags.filter(x => x !== tag);
+        this.todaysTags.unshift(tag);
       } else {
         this.$bvToast.toast(body.msg, {
           title: "Error",
@@ -98,7 +98,7 @@ export default {
       this.searchTerms = "";
     },
     saveOldTag(event) {
-      const tag = event.target.innerText;
+      const tag = event.target.innerText.trim();
       this.saveTag(tag);
     },
     watcher(value) {
