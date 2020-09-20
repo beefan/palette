@@ -1,20 +1,23 @@
 <template lang="pug">
 div#app
-  b-nav(align="right" v-if="loggedIn")
-    b-nav-item-dropdown(id="nav-dropdown" style="font-size: 2rem;" text="🎨" toggle-class="nav-link-custom" variant="dark" right)
-      b-dropdown-item(@click="") Palette
-      b-dropdown-item(@click="") Settings
+  b-nav(align="center" v-if="loggedIn")
+    b-nav-text.title {{ activePage }}
+    b-nav-form
+      b-form-input(v-if="activePage == 'Palette'" v-model="searchTerms" ria-label="Input" class="mr-1")
+    b-nav-item-dropdown(id="nav-dropdown" style="font-size: 2rem;" text="🎨")
+      b-dropdown-item(@click="settings = false") Palette
+      b-dropdown-item(@click="settings = true") Settings
       b-dropdown-item(@click="logout") Logout
   Login(@login="login" v-if="!loggedIn")
-  Settings(@goback="settings = !settings" v-if="loggedIn && settings")
-  Palette(v-if="loggedIn && !settings")
+  Settings(v-if="loggedIn && settings")
+  Palette(v-if="loggedIn && !settings" :search-text="searchTerms")
 </template>
 
 <script>
 import Login from "./components/Login.vue";
 import Settings from "./components/Settings.vue";
 import Palette from "./components/Palette.vue";
-import fetchUtil from './assets/fetch-util';
+import fetchUtil from "./assets/fetch-util";
 
 export default {
   name: "App",
@@ -26,11 +29,18 @@ export default {
   data() {
     return {
       loggedIn: false,
-      settings: true
-    }
+      settings: false,
+      searchTerms: ""
+    };
   },
   mounted() {
     this.loginIfSessionIsActive();
+  },
+  computed: {
+    activePage() {
+      if (!this.loggedIn) return "";
+      return this.settings ? "Settings" : "Palette";
+    }
   },
   methods: {
     login() {
@@ -58,5 +68,11 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+.title {
+  padding-right: 20px;
+  font-size: 2rem;
+  text-align: left;
+  padding-left: 8%;
 }
 </style>
