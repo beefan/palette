@@ -7,14 +7,14 @@
         b-col
             b-form-group(description="today's tags")
                 b-button(@click="saveOldTag" 
-                         v-for="tag in todaysTags.filter((x,i) => i <= 10)" 
+                         v-for="tag in todaysTopTags" 
                          class="mb-2 ml-sm-2 mb-sm-2" 
                          pill 
                          variant="outline-info" 
                          size="sm") {{ tag }}
     b-row
         b-button(@click="saveOldTag" 
-            v-for="tag in todaysTags.filter((x,i) => i > 10)" 
+            v-for="tag in todaysTagsOverflow" 
             class="mb-2 ml-sm-2 mb-sm-2" 
             pill 
             variant="outline-info" 
@@ -51,6 +51,12 @@ export default {
     dateString() {
       const d = new Date();
       return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+    },
+    todaysTopTags() {
+      return this.todaysTags.filter((x, i) => i <= 10);
+    },
+    todaysTagsOverflow() {
+      return this.todaysTags.filter((x, i) => i > 10);
     }
   },
   mounted() {
