@@ -1,16 +1,16 @@
 <template lang="pug">
 div#app
-  b-nav(align="center" v-if="loggedIn")
-    b-nav-text.title {{ activePage }}
+  b-nav(align="center" v-if="activeView != views.LOGIN")
+    b-nav-text.title {{ activeView }}
     b-nav-form
-      b-form-input(v-if="activePage == 'Palette'" v-model="searchTerms" ria-label="Input" class="mr-1")
+      b-form-input(v-if="activeView == views.PALETTE" v-model="searchTerms" ria-label="Input" class="mr-1")
     b-nav-item-dropdown(id="nav-dropdown" style="font-size: 2rem;" text="🎨")
-      b-dropdown-item(@click="settings = false") Palette
-      b-dropdown-item(@click="settings = true") Settings
+      b-dropdown-item(@click="activeView = views.PALETTE") Palette
+      b-dropdown-item(@click="activeView = views.SETTINGS") Settings
       b-dropdown-item(@click="logout") Logout
-  Login(@login="login" v-if="!loggedIn")
-  Settings(v-if="loggedIn && settings")
-  Palette(v-if="loggedIn && !settings" :search-text="searchTerms")
+  Login(@login="activeView == views.PALETTE" v-if="activeView == views.LOGIN")
+  Settings(v-if="activeView == views.SETTINGS")
+  Palette(v-if="activeView == views.PALETTE" :search-text="searchTerms")
 </template>
 
 <script>
@@ -28,33 +28,30 @@ export default {
   },
   data() {
     return {
-      loggedIn: false,
-      settings: false,
-      searchTerms: ""
+      searchTerms: "",
+      views: {
+        LOGIN: "Login",
+        SETTINGS: "Settings",
+        PALETTE: "Palette"
+      },
+      activeView: ""
     };
   },
   mounted() {
+    this.activeView = this.views.LOGIN;
     this.loginIfSessionIsActive();
   },
-  computed: {
-    activePage() {
-      if (!this.loggedIn) return "";
-      return this.settings ? "Settings" : "Palette";
-    }
-  },
   methods: {
-    login() {
-      this.loggedIn = true;
-    },
     async logout() {
-      this.loggedIn = false;
+      this.activeView = this.views.LOGIN;
       await fetchUtil.getData(`${process.env.VUE_APP_API_HOST}/user/logout`);
     },
     async loginIfSessionIsActive() {
       const res = await fetchUtil.getData(process.env.VUE_APP_API_HOST);
       await res.json();
-      console.log(res.status);
-      this.loggedIn = res.status == 200;
+      if (res.status == 200) {
+        this.activeView = this.views.PALETTE;
+      }
     }
   }
 };
