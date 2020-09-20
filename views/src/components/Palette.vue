@@ -53,7 +53,7 @@ export default {
       return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
     },
     todaysTopTags() {
-      return this.todaysTags.slice(0, 9);
+      return this.todaysTags.slice(0, 10);
     },
     todaysTagsOverflow() {
       return this.todaysTags.slice(10);

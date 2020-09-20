@@ -46,14 +46,22 @@ Ok, okay
     * Cookie/Session management - express-session, cookie-parser
     * Environment variables - dotenv
 
+Postman was used to test all current routes.
+
 to run: 
 ```
 cd palette-journal
 npm install
 node app.js
 ```
-
-Postman was used to test all current routes.
+basic frontend with login, registration, settings, and tag entry view now working in vuejs.
+![screen shot](./screen.png)
+to run: 
+```
+cd palette-journal/views
+npm install
+npm run serve
+```
 
 ### knowledge I leaned on
 * [passport documentation](http://www.passportjs.org/docs/authenticate/)
