@@ -1,5 +1,10 @@
 <template lang="pug">
 div#app
+  b-nav(align="right" v-if="loggedIn")
+    b-nav-item-dropdown(id="nav-dropdown" style="font-size: 2rem;" text="🎨" toggle-class="nav-link-custom" variant="dark" right)
+      b-dropdown-item(@click="") Palette
+      b-dropdown-item(@click="") Settings
+      b-dropdown-item(@click="logout") Logout
   Login(@login="login" v-if="!loggedIn")
   Settings(@goback="settings = !settings" v-if="loggedIn && settings")
   Palette(v-if="loggedIn && !settings")
@@ -31,8 +36,9 @@ export default {
     login() {
       this.loggedIn = true;
     },
-    logout() {
+    async logout() {
       this.loggedIn = false;
+      await fetchUtil.getData(`${process.env.VUE_APP_API_HOST}/user/logout`);
     },
     async loginIfSessionIsActive() {
       const res = await fetchUtil.getData(process.env.VUE_APP_API_HOST);
