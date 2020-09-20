@@ -22,7 +22,7 @@ export default {
     async fetchPalette() {
       const res = await fetchUtil.getData(`${this.apihost}/1/api/palette`);
       const body = await res.json();
-      this.tagPalette = body.rows;
+      this.tagPalette = body;
     }
   }
 };

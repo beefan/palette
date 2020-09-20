@@ -15,7 +15,7 @@ async function getTagPalette(req, res) {
             'AND userid = $1 ' + 'GROUP BY tag.tag ' +
             'ORDER BY count desc ' + 'LIMIT 50;'
         const { rows } = await db.query(sql, [userid]);
-        res.status(200).send({ rows });
+        res.status(200).send(rows);
     } catch (err) {
         return res.send(err);
     }
@@ -58,7 +58,7 @@ async function getUserTagsByDay(req, res) {
             'GROUP BY tag.tag ' +
             'ORDER BY count desc;';
         const { rows } = await db.query(sql, [date, userid]);
-        res.status(200).send({ rows });
+        res.status(200).send(rows);
     } catch (err) {
         console.error(err);
         return res.send(err);
@@ -80,7 +80,7 @@ async function getUserTopTagsSince(req, res) {
             'AND userid = $2 ' + 'GROUP BY tag.tag ' + 'ORDER BY count desc ' + 'LIMIT 50;';
         console.log(sql);
         const { rows } = await db.query(sql, [days, userid]);
-        res.status(200).send({ rows });
+        res.status(200).send(rows);
     } catch (err) {
         console.error(err);
         return res.send(err);
@@ -137,7 +137,7 @@ async function getUserTagCousins(req, res) {
             'GROUP BY tag.tag ' +
             'ORDER BY count desc;'
         const { rows } = await db.query(sql, [tag, userid]);
-        res.status(200).send({ rows });
+        res.status(200).send(rows);
     } catch (err) {
         console.error(err);
         return res.send(err);
