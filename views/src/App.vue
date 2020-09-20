@@ -8,7 +8,7 @@ div#app
       b-dropdown-item(@click="activeView = views.PALETTE") Palette
       b-dropdown-item(@click="activeView = views.SETTINGS") Settings
       b-dropdown-item(@click="logout") Logout
-  Login(@login="activeView == views.PALETTE" v-if="activeView == views.LOGIN")
+  Login(@login="activeView = views.PALETTE" v-if="activeView == views.LOGIN")
   Settings(v-if="activeView == views.SETTINGS")
   Palette(v-if="activeView == views.PALETTE" :search-text="searchTerms")
 </template>
@@ -38,7 +38,6 @@ export default {
     };
   },
   mounted() {
-    this.activeView = this.views.LOGIN;
     this.loginIfSessionIsActive();
   },
   methods: {
@@ -51,6 +50,8 @@ export default {
       await res.json();
       if (res.status == 200) {
         this.activeView = this.views.PALETTE;
+      } else {
+        this.activeView = this.views.LOGIN;
       }
     }
   }
