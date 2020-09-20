@@ -51,11 +51,14 @@ export default {
         }
     },
     methods: {
+        setWatcher() {
+            this.settingsWatcher = Object.assign({}, this.settings);
+        },
         async fetchSettings() {
             const res = await fetchutil.getData(`${this.apihost}/user/settings/`);
             const body = await res.json();
             this.settings = body[0];
-            this.settingsWatcher = Object.assign({}, this.settings);
+            this.setWatcher();
         },
         async saveSettings() {
             const res = await fetchutil.postData(`${this.apihost}/user/settings/save/`, this.settings);
@@ -66,6 +69,7 @@ export default {
                     variant: 'success',
                     toaster: 'b-toaster-top-center'
                 });
+                this.setWatcher();
             } else {
                 this.$bvToast.toast(body.msg, {
                     title: 'Error',

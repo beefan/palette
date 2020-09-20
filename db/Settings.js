@@ -9,7 +9,6 @@ async function getUserSettings(req, res) {
     try {
         const sql = 'SELECT prompt_frequency_hrs, analysis_frequency_hrs, check_limit_hrs FROM settings WHERE userid=$1';
         const {rows} = await db.query(sql, [userid]);
-        console.log('rows: ', rows), userid;
         if (rows[0] != null) {
             res.status(200).send(rows);
         } else {
@@ -45,7 +44,7 @@ async function saveUserSettings(req, res) {
             await db.query('DELETE FROM settings WHERE userid=$1', [userid]);
         } 
         await db.query(
-            'INSERT INTO settings (userd, prompt_frequency_hrs, analysis_frequency_hrs, check_limit_hrs) VALUES ($1, $2, $3, $4)', 
+            'INSERT INTO settings (userid, prompt_frequency_hrs, analysis_frequency_hrs, check_limit_hrs) VALUES ($1, $2, $3, $4)', 
             [userid, pf, af, cl]
             );
         await db.query('COMMIT;');
